@@ -1,4 +1,5 @@
-﻿using iBeaconWebAPI.Models;
+﻿using iBeaconWebAPI;
+using iBeaconWebAPI.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +11,43 @@ namespace iBeaconWebAPI.Controllers
 {
     public class iBeaconController : ApiController
     {
-        iBeacon[] Beacons = new iBeacon[] {
-            new iBeacon{ UUID = "1", Minor = "1", Major = "1" , APIUrl = "https://tw.yahoo.com/"},
-            new iBeacon{ UUID = "1", Minor = "1", Major = "2" , APIUrl = "https://tw.news.yahoo.com/"},
-            new iBeacon{ UUID = "1", Minor = "1", Major = "3" , APIUrl = "https://tw.stock.yahoo.com/"},
-            new iBeacon{ UUID = "1", Minor = "1", Major = "4" , APIUrl = "https://movies.yahoo.com.tw/"}
-        };
 
-        //取得所有Beaconc呼叫的API URL
-        public IEnumerable<iBeacon> GetAllBeacons()
+        /// <summary>
+        /// 取得所有Beacon
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<iBeacon> Get()
         {
-            return Beacons;
+            iBeaconModel db = new iBeaconModel();
+            var a = db.iBeacon;
+            return db.iBeacon.ToArray();
         }
 
-        //取得特定Beaconc呼叫的API URL
+        /// <summary>
+        /// 取得特定Beacon
+        /// </summary>
+        /// <param name="beacon"></param>
+        /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult GetBeaconAPI(iBeacon beacon)
+        public IHttpActionResult POST(iBeacon beacon)
         {
-            var result = Beacons.FirstOrDefault(x => x.UUID == beacon.UUID && x.Major == beacon.Major && x.Minor == beacon.Minor);
+            iBeaconModel db = new iBeaconModel();
+            var result = db.iBeacon.FirstOrDefault(x => x.UUID == beacon.UUID && x.Major == beacon.Major && x.Minor == beacon.Minor);
             if (result == null)
                 return StatusCode(HttpStatusCode.NoContent);
             else
-                return Ok(result.APIUrl);
+                return Ok(result);
         }
+
+        /// <summary>
+        /// 新增Beacon
+        /// </summary>
+        /// <param name="beacon"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public IHttpActionResult PUT(iBeacon beacon)
+        {
+            return Ok();
+        } 
     }
 }
